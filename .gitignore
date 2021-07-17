@@ -1,3 +1,6 @@
+.idea/
+.vscode/
+config-test.json
 # Binaries for programs and plugins
 *.exe
 *.exe~
