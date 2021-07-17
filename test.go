@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/NubeIO/nubeio-rubix-lib-sqlite-go/pkg/database"
+	"github.com/NubeIO/nubeio-rubix-lib-sqlite-go/sql_config"
 	"gorm.io/gorm"
+	"log"
 )
 
 
@@ -25,14 +28,25 @@ func main() {
 		Price uint
 	}
 
-	var autoMigrate = []interface{}{
+	var models = []interface{}{
 		&TestTable{},  &TestTable2nd{},  &Product{},
 	}
-	f := "config-test.json"
-	var db = database.DB
+	var args sql_config.Params
+	args.UseConfigFile = false
 
-	database.SetupDB(f, true, autoMigrate)
+	var config sql_config.Database
+	config.DbName = "test.db"
+	config.DbPath = "./"
 
+	err := sql_config.SetSqliteConfig(config, args); if err != nil {
+		log.Println(err)
+		return
+	}
+	err = database.SetupDB(models)
+	if err != nil {
+		log.Println(2222, err)
+	}
+	var db = database.GetDB()
 	db.Create(&Product{Code: "D42", Price: 100})
 	// Read
 	var product Product
@@ -45,10 +59,6 @@ func main() {
 	db.Model(&product).Updates(Product{Price: 200, Code: "F42"}) // non-zero fields
 	db.Model(&product).Updates(map[string]interface{}{"Price": 200, "Code": "F42"})
 	db.First(&product, 1) // find product with integer primary key
-
-
-
-
-
+	fmt.Printf("%+v\n", product)
 
 }
