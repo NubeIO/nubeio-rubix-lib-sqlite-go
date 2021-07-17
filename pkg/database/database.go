@@ -20,6 +20,11 @@ type Database struct {
 }
 
 // SetupDB opens a database and saves the reference to `Database` struct.
+// pass in an array of struts for each model
+// example
+//var models = []interface{}{
+//	&TestTable{},  &TestTable2nd{},
+//}
 func SetupDB(models []interface{}) error {
 	var db = DB
 	commonConfig := sql_config.GetSqliteConfig()
